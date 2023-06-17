@@ -1,6 +1,9 @@
 import express, { Express } from "express";
-import { request, gql } from "graphql-request";
+import { gql } from "graphql-request";
 import { randomUUID } from "node:crypto";
+import { db } from "./db";
+import { graphQLClient, searchJourneyQuery } from "./graphql";
+import z from "zod";
 
 export const createApp = (): Express => {
   const app = express();
@@ -8,34 +11,13 @@ export const createApp = (): Express => {
 
   app.post("/api/search-journey", async (req, res) => {
     try {
-      const { departureStation, arrivalStation, departureDateTime } = req.body;
-
-      const endpoint = "https://www.vr.fi/api/v6";
-
-      const graphqlQuery = gql`
-        query searchJourney(
-          $departureStation: String!
-          $arrivalStation: String!
-          $departureDateTime: DateTime!
-          $passengers: [PassengerInput!]!
-          $filters: [ConnectionFilter]!
-          $placeTypes: [PlaceType!]!
-        ) {
-          searchJourney(
-            departureStation: $departureStation
-            arrivalStation: $arrivalStation
-            departureDateTime: $departureDateTime
-            passengers: $passengers
-            filters: $filters
-            placeTypes: $placeTypes
-          ) {
-            id
-            departureTime
-            arrivalTime
-            totalPrice
-          }
-        }
-      `;
+      const { departureStation, arrivalStation, departureDateTime } = z
+        .object({
+          departureStation: z.string(),
+          arrivalStation: z.string(),
+          departureDateTime: z.string(),
+        })
+        .parse(req.body);
 
       const variables = {
         departureStation,
@@ -53,16 +35,18 @@ export const createApp = (): Express => {
         placeTypes: ["SEAT", "CABIN_BED"],
       };
 
-      const response = (await request(endpoint, graphqlQuery, variables)) as {
-        searchJourney: {
-          id: string;
-          departureTime: string;
-          arrivalTime: string;
-          totalPrice: number;
-        }[];
-      };
-
-      const data = response.searchJourney;
+      const data = await z
+        .object({
+          searchJourney: z.array(
+            z.object({
+              id: z.string(),
+              departureTime: z.string(),
+              arrivalTime: z.string(),
+              totalPrice: z.number(),
+            })
+          ),
+        })
+        .parseAsync(await graphQLClient.request(searchJourneyQuery, variables));
 
       res.json(data);
     } catch (error) {

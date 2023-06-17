@@ -6,7 +6,7 @@ import { graphQLClient, searchJourneyQuery } from "./graphql";
 
 export const job = cron.schedule("* * * * *", async () => {
   console.log("Running a task every minute");
-  const journey = await db.journey.findFirst();
+  const journey = await db.journey.findFirst({ include: { prices: true } });
 
   if (!journey) return;
 
@@ -45,19 +45,22 @@ export const job = cron.schedule("* * * * *", async () => {
   console.log(lowestOffer);
 
   if (
-    journey.totalPrice === null ||
-    lowestOffer.totalPrice < journey.totalPrice
+    journey.prices.length === 0 ||
+    lowestOffer.totalPrice < journey.prices[0].totalPrice
   ) {
     console.log("Got better offer");
     const result = await db.journey.update({
       where: { id: journey?.id },
       data: {
         userId: journey?.userId,
-        totalPrice: lowestOffer.totalPrice,
         departureStation: journey?.departureStation,
         arrivalStation: journey?.arrivalStation,
         departureDateTime: lowestOffer.departureTime,
+        prices: {
+          create: { totalPrice: lowestOffer.totalPrice },
+        },
       },
+      include: { prices: true },
     });
 
     console.log(result);

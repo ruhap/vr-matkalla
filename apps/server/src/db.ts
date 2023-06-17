@@ -25,11 +25,11 @@ export const updateJourney = async (
   }
 ) => {
   const updatedJourney = await db.journey.update({
-    where: { id: journey?.id },
+    where: { id: journey.id },
     data: {
-      userId: journey?.userId,
-      departureStation: journey?.departureStation,
-      arrivalStation: journey?.arrivalStation,
+      userId: journey.userId,
+      departureStation: journey.departureStation,
+      arrivalStation: journey.arrivalStation,
       departureDateTime: lowestOffer.departureTime,
       prices: {
         create: { totalPrice: lowestOffer.totalPrice },

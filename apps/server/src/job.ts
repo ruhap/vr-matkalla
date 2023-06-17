@@ -20,7 +20,7 @@ const isPriceLower = (
   );
 };
 
-export const job = cron.schedule("*/15 * * * * *", async () => {
+export const job = cron.schedule("* * * * *", async () => {
   console.log("Start");
   const journeys = await getJourneys();
   const lowestOffers = await Promise.all(journeys.map(fetchLowestOffer));
@@ -28,6 +28,6 @@ export const job = cron.schedule("*/15 * * * * *", async () => {
     .filter((journey, index) => isPriceLower(journey, lowestOffers[index]))
     .map((journey, index) => updateJourney(journey, lowestOffers[index]));
 
-  await Promise.all(updateJourneys);
-  console.log(`End`);
+  const updated = await Promise.all(updateJourneys);
+  console.log(`End, updated ${updated.length} items!`);
 });

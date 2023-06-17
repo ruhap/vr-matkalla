@@ -1,8 +1,17 @@
 import { db } from "../src/db";
+import { randomUUID } from "node:crypto";
 
-async function main() {
+const main = async () => {
   console.log("seed started");
-}
+
+  const user = await db.user.create({
+    data: {
+      email: "test@test.fi",
+    },
+  });
+
+  console.log(user);
+};
 
 main()
   .then(async () => {

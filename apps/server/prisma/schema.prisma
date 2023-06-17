@@ -11,15 +11,15 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
+  id       String    @id @default(cuid())
   email    String    @unique
   journeys Journey[]
 }
 
 model Journey {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   journeyId     String
   departureTime DateTime

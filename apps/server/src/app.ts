@@ -1,7 +1,5 @@
 import express, { Express } from "express";
-import { gql } from "graphql-request";
 import { randomUUID } from "node:crypto";
-import { db } from "./db";
 import { graphQLClient, searchJourneyQuery } from "./graphql";
 import z from "zod";
 

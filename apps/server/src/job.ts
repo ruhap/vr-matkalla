@@ -5,8 +5,10 @@ import { randomUUID } from "node:crypto";
 import { graphQLClient, searchJourneyQuery } from "./graphql";
 
 export const job = cron.schedule("* * * * *", async () => {
-  console.log("running a task every minute");
+  console.log("Running a task every minute");
   const journey = await db.journey.findFirst();
+
+  if (!journey) return;
 
   const variables = {
     departureStation: journey?.departureStation,
@@ -35,11 +37,29 @@ export const job = cron.schedule("* * * * *", async () => {
       ),
     })
     .parseAsync(await graphQLClient.request(searchJourneyQuery, variables));
-  console.log("data", data);
 
-  // Update the search journey data in the database
-  // await db.searchJourney.update({
-  //   where: { id: journey.id },
-  //   data: { data: JSON.stringify(data) },
-  // });
+  const lowestOffer = data.searchJourney.reduce((lowest, current) =>
+    current.totalPrice < lowest.totalPrice ? current : lowest
+  );
+
+  console.log(lowestOffer);
+
+  if (
+    journey.totalPrice === null ||
+    lowestOffer.totalPrice < journey.totalPrice
+  ) {
+    console.log("Got better offer");
+    const result = await db.journey.update({
+      where: { id: journey?.id },
+      data: {
+        userId: journey?.userId,
+        totalPrice: lowestOffer.totalPrice,
+        departureStation: journey?.departureStation,
+        arrivalStation: journey?.arrivalStation,
+        departureDateTime: lowestOffer.departureTime,
+      },
+    });
+
+    console.log(result);
+  }
 });

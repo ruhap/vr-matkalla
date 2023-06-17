@@ -20,6 +20,7 @@ model Journey {
   id                String @id @default(cuid())
   user              User   @relation(fields: [userId], references: [id])
   userId            String
+  totalPrice        Int?
   departureStation  String
   arrivalStation    String
   departureDateTime String

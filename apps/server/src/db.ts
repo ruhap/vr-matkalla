@@ -9,6 +9,7 @@ export const getJourneys = async () => {
         orderBy: {
           createdAt: "desc",
         },
+        take: 1,
       },
     },
   });
@@ -40,6 +41,7 @@ export const updateJourney = async (
         orderBy: {
           createdAt: "desc",
         },
+        take: 1,
       },
     },
   });

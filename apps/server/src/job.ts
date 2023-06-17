@@ -1,10 +1,8 @@
 import cron from "node-cron";
-import { db, getJourneys, updateJourney } from "./db";
-import { z } from "zod";
-import { randomUUID } from "node:crypto";
+import { getJourneys, updateJourney } from "./db";
+
 import { fetchLowestOffer, graphQLClient, searchJourneyQuery } from "./graphql";
 import { Journey, JourneyPrice } from "@prisma/client";
-import { performance } from "node:perf_hooks";
 
 const isPriceLower = (
   journey: Journey & { prices: JourneyPrice[] },

@@ -35,7 +35,6 @@ export const createApp = (): Express => {
   //       .object({
   //         searchJourney: z.array(
   //           z.object({
-  //             id: z.string(),
   //             departureTime: z.string(),
   //             arrivalTime: z.string(),
   //             totalPrice: z.number(),

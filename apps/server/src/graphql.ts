@@ -19,7 +19,6 @@ export const searchJourneyQuery = gql`
       filters: $filters
       placeTypes: $placeTypes
     ) {
-      id
       departureTime
       arrivalTime
       totalPrice

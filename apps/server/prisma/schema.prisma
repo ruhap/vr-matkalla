@@ -17,12 +17,10 @@ model User {
 }
 
 model Journey {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  journeyId     String
-  departureTime DateTime
-  arrivalTime   DateTime
-  totalPrice    Int
+  id                String @id @default(cuid())
+  user              User   @relation(fields: [userId], references: [id])
+  userId            String
+  departureStation  String
+  arrivalStation    String
+  departureDateTime String
 }

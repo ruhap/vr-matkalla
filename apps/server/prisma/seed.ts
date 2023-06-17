@@ -1,9 +1,6 @@
 import { db } from "../src/db";
 
 const main = async () => {
-  await db.user.deleteMany({});
-  await db.journey.deleteMany({});
-
   const user = await db.user.create({
     data: {
       email: "test@test.fi",
@@ -36,9 +33,9 @@ const main = async () => {
           id: user2.id,
         },
       },
-      departureStation: "TPE",
-      arrivalStation: "HKI",
-      departureDateTime: "2023-08-22",
+      arrivalStation: "HNV",
+      departureDateTime: "2023-06-30",
+      departureStation: "EPO",
     },
   });
 

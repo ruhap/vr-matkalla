@@ -1,5 +1,4 @@
 import { db } from "../src/db";
-import { randomUUID } from "node:crypto";
 
 const main = async () => {
   await db.user.deleteMany({});
@@ -8,6 +7,12 @@ const main = async () => {
   const user = await db.user.create({
     data: {
       email: "test@test.fi",
+    },
+  });
+
+  const user2 = await db.user.create({
+    data: {
+      email: "test2@test2.fi",
     },
   });
 
@@ -24,7 +29,20 @@ const main = async () => {
     },
   });
 
-  console.log(journey);
+  const journey2 = await db.journey.create({
+    data: {
+      user: {
+        connect: {
+          id: user2.id,
+        },
+      },
+      departureStation: "TPE",
+      arrivalStation: "HKI",
+      departureDateTime: "2023-08-22",
+    },
+  });
+
+  console.log({ journey, journey2 });
 };
 
 main()

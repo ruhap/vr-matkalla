@@ -4,6 +4,7 @@ import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { fetchLowestOffer, graphQLClient, searchJourneyQuery } from "./graphql";
 import { Journey, JourneyPrice } from "@prisma/client";
+import { performance } from "node:perf_hooks";
 
 const isPriceLower = (
   journey: Journey & { prices: JourneyPrice[] },
@@ -20,15 +21,13 @@ const isPriceLower = (
 };
 
 export const job = cron.schedule("*/15 * * * * *", async () => {
-  console.log("Running a task every minute");
-
+  console.log("Start");
   const journeys = await getJourneys();
   const lowestOffers = await Promise.all(journeys.map(fetchLowestOffer));
-
   const updateJourneys = journeys
     .filter((journey, index) => isPriceLower(journey, lowestOffers[index]))
     .map((journey, index) => updateJourney(journey, lowestOffers[index]));
 
   await Promise.all(updateJourneys);
-  console.log("End of a task every minute");
+  console.log(`End`);
 });

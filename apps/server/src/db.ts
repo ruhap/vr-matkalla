@@ -36,7 +36,11 @@ export const updateJourney = async (
       },
     },
     include: {
-      prices: true,
+      prices: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 

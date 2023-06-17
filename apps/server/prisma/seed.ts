@@ -39,7 +39,20 @@ const main = async () => {
     },
   });
 
-  console.log({ journey, journey2 });
+  const journey3 = await db.journey.create({
+    data: {
+      user: {
+        connect: {
+          id: user2.id,
+        },
+      },
+      arrivalStation: "HNK",
+      departureDateTime: "2023-06-30",
+      departureStation: "HNV",
+    },
+  });
+
+  console.log({ journey, journey2, journey3 });
 };
 
 main()

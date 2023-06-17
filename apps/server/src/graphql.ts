@@ -43,9 +43,9 @@ export const fetchLowestOffer = async (
   journey: Journey & { prices: JourneyPrice[] }
 ) => {
   const variables = {
-    departureStation: journey?.departureStation,
-    arrivalStation: journey?.arrivalStation,
-    departureDateTime: journey?.departureDateTime,
+    departureStation: journey.departureStation,
+    arrivalStation: journey.arrivalStation,
+    departureDateTime: journey.departureDateTime,
     passengers: [
       {
         key: randomUUID(),

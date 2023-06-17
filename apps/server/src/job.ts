@@ -42,8 +42,6 @@ export const job = cron.schedule("* * * * *", async () => {
       current.totalPrice < lowest.totalPrice ? current : lowest
     );
 
-    console.log(lowestOffer);
-
     if (
       journey.prices.length === 0 ||
       lowestOffer.totalPrice < journey.prices[0].totalPrice
@@ -60,7 +58,6 @@ export const job = cron.schedule("* * * * *", async () => {
             create: { totalPrice: lowestOffer.totalPrice },
           },
         },
-        include: { prices: true },
       });
     }
   }

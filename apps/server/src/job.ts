@@ -23,9 +23,7 @@ export const job = cron.schedule("*/15 * * * * *", async () => {
   console.log("Running a task every minute");
 
   const journeys = await getJourneys();
-
-  const fetchLowestOffers = journeys.map(fetchLowestOffer);
-  const lowestOffers = await Promise.all(fetchLowestOffers);
+  const lowestOffers = await Promise.all(journeys.map(fetchLowestOffer));
 
   const updateJourneys = journeys
     .filter((journey, index) => isPriceLower(journey, lowestOffers[index]))

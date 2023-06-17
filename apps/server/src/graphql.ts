@@ -29,6 +29,16 @@ export const searchJourneyQuery = gql`
   }
 `;
 
+export const schema = z.object({
+  searchJourney: z.array(
+    z.object({
+      departureTime: z.string(),
+      arrivalTime: z.string(),
+      totalPrice: z.number(),
+    })
+  ),
+});
+
 export const fetchLowestOffer = async (
   journey: Journey & { prices: JourneyPrice[] }
 ) => {
@@ -48,21 +58,11 @@ export const fetchLowestOffer = async (
     placeTypes: ["SEAT", "CABIN_BED"],
   };
 
-  const response = await graphQLClient.request(searchJourneyQuery, variables);
+  const { searchJourney } = await schema.parseAsync(
+    await graphQLClient.request(searchJourneyQuery, variables)
+  );
 
-  const data = z
-    .object({
-      searchJourney: z.array(
-        z.object({
-          departureTime: z.string(),
-          arrivalTime: z.string(),
-          totalPrice: z.number(),
-        })
-      ),
-    })
-    .parse(response);
-
-  const lowestOffer = data.searchJourney.reduce((lowest, current) =>
+  const lowestOffer = searchJourney.reduce((lowest, current) =>
     current.totalPrice < lowest.totalPrice ? current : lowest
   );
 

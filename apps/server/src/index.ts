@@ -1,16 +1,11 @@
-import { createApp } from "./app";
-import { job } from "./job";
+import express from "express";
+import { getJourneys } from "./controllers";
 
-const main = async () => {
-  const app = createApp();
+const app = express();
+app.use(express.json());
 
-  app.listen(3000, () => {
-    console.info(`Server ready on port 3000`);
-    job.start();
-  });
-};
+app.get("/journeys", getJourneys);
 
-main().catch((err) => {
-  console.log(err.stack);
-  process.exit(-1);
+app.listen(3000, () => {
+  console.info(`Server ready on port 3000`);
 });
